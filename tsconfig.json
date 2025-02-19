@@ -27,7 +27,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/_lib/data-service.ts",
-    "app/cabins/[cabinId]"
+    "app/cabins/[cabinId]",
+    "app/_components/LoginMessage.js"
   ],
   "exclude": ["node_modules"]
 }
