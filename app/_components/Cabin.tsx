@@ -3,9 +3,20 @@ import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
 
 import Image from "next/image";
 
-export default function Cabin({ cabin }) {
-  const { id, name, maxCapacity, regularPrice, discount, image, description } =
-    cabin;
+export default function Cabin({
+  cabin,
+}: {
+  cabin: {
+    id: number;
+    name: string;
+    maxCapacity: number;
+    regularPrice: number;
+    discount: number;
+    image: string;
+    description: string;
+  };
+}) {
+  const { name, maxCapacity, image, description } = cabin;
 
   return (
     <div className="grid grid-cols-[3fr_4fr] gap-20 border border-primary-800 py-3 px-10 mb-24">
@@ -13,7 +24,7 @@ export default function Cabin({ cabin }) {
         <Image
           src={image}
           fill
-          className="object-cover"
+          className="object-cover transition-all"
           alt={`Cabin ${name}`}
         />
       </div>
