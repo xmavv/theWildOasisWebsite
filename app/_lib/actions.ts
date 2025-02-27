@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { supabase } from "./supabase";
+import { getBookings } from "./data-service";
 
 export async function updateGuest(formData: FormData) {
   const session = await auth();
@@ -27,6 +28,37 @@ export async function updateGuest(formData: FormData) {
   if (error) throw new Error("Guest could not be updated");
 
   revalidatePath("/account/profile");
+}
+
+export async function deleteReservation(bookingId: number, guestId: number) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  // 2
+  // prevention from deleting not users cabins
+  // moze nie byc takie super bo wtedy w curl w data-raw bedzie przekazane to co podalismy do funkcji i wtedy ktos moglby sie domyslic albo bruteforcowac rozne id i rozne id cabin
+  if (guestId !== session.user.guestId)
+    throw new Error("You are not allowed to delete this booking!");
+
+  // 1
+
+  // const guestBookings = await getBookings(session.user.guestId);
+  // const guestBookingsIds = guestBookings.map((booking) => booking.id);
+
+  // // prevention from deleting not users cabins
+  // if (!guestBookingsIds.includes(bookingId))
+  //   throw new Error("You are not allowed to delete this booking!");
+
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", bookingId);
+
+  if (error) throw new Error("Booking could not be deleted");
+
+  // we give a tag from fetch function, and then we revalidate this specific tag
+  // revalidateTag();
+  revalidatePath("account/reservations");
 }
 
 export async function signInAction() {
