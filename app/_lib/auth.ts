@@ -1,6 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { DefaultSession, Session, User } from "next-auth";
 import Google from "next-auth/providers/google";
 import { createGuest, getGuest } from "./data-service";
+
+declare module "next-auth" {
+  interface Session {
+    user: { guestId: number } & DefaultSession["user"];
+  }
+}
 
 const authConfig = {
   providers: [
@@ -25,9 +31,11 @@ const authConfig = {
         return false;
       }
     },
-    async session({ session, user }) {
-      const guest = await getGuest(session.user.email);
-      session.user.guestId = guest.id;
+    async session({ session, user }: { session: Session; user: User }) {
+      if (session.user) {
+        const guest = await getGuest(session.user.email);
+        session.user.guestId = guest.id;
+      }
 
       return session;
     },
