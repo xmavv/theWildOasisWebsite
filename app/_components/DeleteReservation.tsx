@@ -7,6 +7,7 @@ import SpinnerMini from "./SpinnerMini";
 function DeleteReservation({
   bookingId,
   guestId,
+  onDelete,
 }: {
   bookingId: number;
   guestId: number;
@@ -15,7 +16,7 @@ function DeleteReservation({
 
   function handleDelete() {
     if (confirm("Are you sure to delete this reservation?"))
-      startTransition(() => deleteReservation(bookingId, guestId));
+      startTransition(() => onDelete(bookingId));
   }
 
   return (

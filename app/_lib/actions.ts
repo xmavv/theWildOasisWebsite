@@ -59,15 +59,15 @@ export async function updateReservation(formData: FormData) {
   redirect("account/reservations");
 }
 
-export async function deleteReservation(bookingId: number, guestId: number) {
+export async function deleteReservation(bookingId: number) {
   const session = await auth();
   if (!session) throw new Error("You must be logged in!");
 
   // 2
   // prevention from deleting not users cabins
   // moze nie byc takie super bo wtedy w curl w data-raw bedzie przekazane to co podalismy do funkcji i wtedy ktos moglby sie domyslic albo bruteforcowac rozne id i rozne id cabin
-  if (guestId !== session.user.guestId)
-    throw new Error("You are not allowed to delete this booking!");
+  // if (guestId !== session.user.guestId)
+  // throw new Error("You are not allowed to delete this booking!");
 
   // 1
 
