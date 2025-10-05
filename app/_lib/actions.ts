@@ -59,6 +59,36 @@ export async function updateReservation(formData: FormData) {
   redirect("account/reservations");
 }
 
+export async function createBooking(bookingData: any, formData: FormData) {
+  const session = await auth();
+  if (!session) throw new Error("You must be logged in!");
+
+  // const xd = Object.entries(formData.entries())
+
+  const newBooking = {
+    ...bookingData,
+    guestId: session.user.guestId,
+    numGuests: Number(formData.get("numGuests")),
+    observations: formData.get("observations")?.slice(0, 1000),
+    extrasPrice: 0,
+    totalPrice: bookingData.cabinPrice,
+    isPaid: false,
+    hasBreakfast: false,
+    status: "unconfirmed",
+  };
+
+  const { error } = await supabase.from("bookings").insert([newBooking]);
+  //we should check there if the dates are not overlaping, we did this in the ui but since anybody can disabled the "disable" prop, we should do it on the server
+  //to make it 100% sure
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be created");
+  }
+  revalidatePath(`/cabins/${bookingData.cabinId}`);
+  redirect("/cabins/thankyou");
+}
+
 export async function deleteReservation(bookingId: number) {
   const session = await auth();
   if (!session) throw new Error("You must be logged in!");
